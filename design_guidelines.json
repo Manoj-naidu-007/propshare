@@ -1,0 +1,211 @@
+{
+  "app_name": "PropShare",
+  "personality": "6 Glass / Luxe DARK",
+  "personality_one_liner": "A cinematic, premium fractional real estate platform with 3D glass depth, deep slate surfaces, and antique gold accents.",
+  "color": {
+    "surface": "#121215",
+    "onSurface": "#FFFFFF",
+    "surfaceSecondary": "#1C1C21",
+    "onSurfaceSecondary": "#E0E0E5",
+    "surfaceTertiary": "#26262D",
+    "onSurfaceTertiary": "#A0A0A8",
+    "surfaceInverse": "#FFFFFF",
+    "onSurfaceInverse": "#121215",
+    "brand": "#D4AF37",
+    "brandPrimary": "#C5A028",
+    "onBrandPrimary": "#121215",
+    "brandSecondary": "#B28F20",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "rgba(212, 175, 55, 0.15)",
+    "onBrandTertiary": "#D4AF37",
+    "success": "#2A9D8F",
+    "onSuccess": "#FFFFFF",
+    "warning": "#E9C46A",
+    "onWarning": "#121215",
+    "error": "#C1121F",
+    "onError": "#FFFFFF",
+    "info": "#8A8A93",
+    "onInfo": "#FFFFFF",
+    "border": "#2A2A32",
+    "borderStrong": "#3A3A44",
+    "divider": "#1C1C21"
+  },
+  "typography": {
+    "displayFontFamily": "Fraunces",
+    "textFontFamily": "Satoshi",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous spacing. Cards must not be cramped. Allow 16-24pt between major sections. Forms and lists should breathe.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "0",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use heavily for sticky headers over scrolling content.",
+      "Use for bottom tab bar and floating action buttons.",
+      "Use translucent cards with border 0.5pt to simulate a glass edge over background images."
+    ],
+    "dont's": [
+      "Do not blur form fields or body text regions.",
+      "Avoid stacking more than 2 blurred surfaces.",
+      "Ensure foreground text on glass is fully readable (use tinted underlays if necessary)."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Auth / Role Selector",
+      "purpose": "Splash screen that transitions into login/signup and role selection (Investor, Company, Admin).",
+      "states": {
+        "loading": "Gold spinner centered over glass background.",
+        "empty": "N/A",
+        "error": "Standard toast notification."
+      },
+      "layout": "Full-bleed abstract 3D finance background image with a dark gradient scrim (top to bottom). Massive, luxurious glass cards stacked vertically for role selection. Brand title in large Fraunces serif."
+    },
+    {
+      "name": "Investor Home",
+      "purpose": "Dashboard showing portfolio snapshot, wallet balance, and featured properties to invest in.",
+      "states": {
+        "loading": "Skeleton loaders for cards.",
+        "empty": "Illustration of a vault/building with 'Start building your portfolio' CTA.",
+        "error": "Glass panel with retry button."
+      },
+      "layout": "Sticky glass header. Hero section is a premium glass card showing Total Portfolio Value and Monthly Returns over a subtle gold-tinted noise background. Below, a horizontally scrolling list of 'Featured Properties' (real photos, vertical gradient scrim, text at bottom). Quick action buttons (Deposit, Withdraw) in a 2-col grid."
+    },
+    {
+      "name": "Property Detail",
+      "purpose": "Deep dive into a specific property, its financials, and the 'Buy Shares' action.",
+      "states": {
+        "loading": "Spinner in center.",
+        "empty": "N/A",
+        "error": "Error message with retry."
+      },
+      "layout": "Parallax hero image of the property filling the top 40% of the screen with a gradient scrim. Content below slides up over the image. Key stats (Valuation, Share Price, ROI) in a 3-col grid of translucent cards. Sticky fixed bottom container (glass or solid surface) with 'Buy Shares' primary gold CTA."
+    },
+    {
+      "name": "Buy Shares Modal",
+      "purpose": "Transaction flow for purchasing fractional shares.",
+      "states": {
+        "loading": "Button shows loading state.",
+        "empty": "N/A",
+        "error": "Inline error text in ruby."
+      },
+      "layout": "Bottom sheet modal using @gorhom/bottom-sheet. Shows property thumbnail, a sleek slider or +/- quantity selector for shares. Auto-calculates total cost vs Wallet balance. Large confirmation button."
+    },
+    {
+      "name": "Portfolio",
+      "purpose": "Detailed view of investor's holdings and performance.",
+      "states": {
+        "loading": "Skeleton rows.",
+        "empty": "Glass card saying 'No shares owned yet.'",
+        "error": "Error state centered."
+      },
+      "layout": "List layout. Header is a dark abstract gold background with overall performance graph/metrics. Holdings are listed as rich rows: property thumbnail (left), title + shares owned (center), current value + P/L in emerald (right)."
+    },
+    {
+      "name": "Wallet",
+      "purpose": "Manage deposits, withdrawals, and view transaction history.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "No transactions text.",
+        "error": "Error toast."
+      },
+      "layout": "Large hero balance at the top. 'Deposit' (primary gold) and 'Withdraw' (secondary) buttons side-by-side. Transaction history as a clean list below, segmented by date. Use 'success' color for deposits, 'surfaceTertiary' icon containers for others."
+    },
+    {
+      "name": "Marketplace",
+      "purpose": "Peer-to-peer trading of property shares.",
+      "states": {
+        "loading": "Skeleton items.",
+        "empty": "No active orders illustration.",
+        "error": "Retry button."
+      },
+      "layout": "Glass segmented control at the top (Buy / Sell). List of active orders. Each order is a glass card showing the property, asking price per share, and 'Accept Order' button."
+    },
+    {
+      "name": "Company Dashboard",
+      "purpose": "Dashboard for real estate companies to manage listings.",
+      "states": {
+        "loading": "Skeletons.",
+        "empty": "List first property CTA.",
+        "error": "Retry."
+      },
+      "layout": "KPI metrics at the top (Total Raised, Active Properties). List of properties managed by the company. Floating Action Button (FAB) in gold to 'Add Property'."
+    },
+    {
+      "name": "Admin Dashboard",
+      "purpose": "Super admin view for platform oversight and approvals.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "N/A",
+        "error": "Retry."
+      },
+      "layout": "Dense but luxurious layout. Top section: Platform TVL, Total Users. Tabbed sections below for 'KYC Approvals', 'Property Approvals', and 'Interest Distribution'. List items have 'Approve' / 'Reject' (success/error) ghost buttons."
+    }
+  ],
+  "images": {
+    "splash_background": {
+      "url": "https://images.unsplash.com/photo-1773236376162-14b9c09b28f4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMDNkJTIwZ2xhc3MlMjBmaW5hbmNlJTIwYmFja2dyb3VuZCUyMGRhcmt8ZW58MHx8fHwxNzg1NTAzMDgwfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Golden horizontal lines with light reflections"
+    },
+    "portfolio_header_bg": {
+      "url": "https://images.unsplash.com/photo-1728853696418-c2c2a7f998fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwyfHxwcmVtaXVtJTIwZ29sZCUyMGZpbmFuY2UlMjBjaGFydCUyMGRhcmslMjAzZHxlbnwwfHx8fDE3ODU1MDMwODV8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Black and gold abstract background"
+    },
+    "property_building_hero": {
+      "url": "https://images.unsplash.com/photo-1619218070141-bcfeb8b93074?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwyfHxwcmVtaXVtJTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlJTIwYnVpbGRpbmclMjBleHRlcmlvciUyMGRhcmt8ZW58MHx8fHwxNzg1NTAzMDgxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Premium modern architecture building exterior dark"
+    },
+    "property_building_tall": {
+      "url": "https://images.unsplash.com/photo-1643175517006-4a1bd8ad37cb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxwcmVtaXVtJTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlJTIwYnVpbGRpbmclMjBleHRlcmlvciUyMGRhcmt8ZW58MHx8fHwxNzg1NTAzMDgxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Tall dark building with windows"
+    },
+    "luxury_interior": {
+      "url": "https://images.unsplash.com/photo-1724582586495-d050726cf354?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODl8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBpbnRlcmlvciUyMGxpdmluZyUyMHJvb20lMjBuaWdodHxlbnwwfHx8fDE3ODU1MDMwODB8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Luxury living room interior at night"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the '6 Glass / Luxe DARK' personality. Do NOT use pure black backgrounds; stick to the slate hexes (#121215, #1C1C21) to allow glass surfaces to show depth.",
+    "Implement the 'NO BLUES' policy globally. Use Emerald (#2A9D8F) for success/positive values, and Deep Ruby (#C1121F) for errors/negative values. Primary brand is Antique Gold (#D4AF37).",
+    "Whenever displaying property images (especially hero or list headers), ALWAYS apply the mandatory gradient-to-dark scrim pattern (top to bottom, transparent to ≥70% surfaceInverse) to ensure white text overlay is legible.",
+    "Use 'Fraunces' for major display numbers (like Portfolio Balance, Share Price) and Titles to give it a cinematic, expensive editorial feel. Use 'Satoshi' for body text and labels.",
+    "The app requires three distinct role views (Investor, Company, Admin). Start with a Splash/Auth screen that lets the user explicitly select their role, which dictates the layout of the Bottom Tabs.",
+    "Emphasize the '3D-like' request by using translucent `surfaceSecondary` cards with an ultra-thin 0.5pt `border` over image backgrounds, effectively creating a frosted glass edge effect.",
+    "Ensure the primary CTA ('Buy Shares', 'Deposit', etc.) remains sticky at the bottom of the screen (above safe area) using a fixed container with a subtle glass or fade backdrop to prevent scroll content collision."
+  ]
+}

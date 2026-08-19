@@ -1,0 +1,50 @@
+{
+  "summary": "Iteration 2 — enhancements testing. BACKEND: 54/54 pytest tests passed (39 regression + 15 new for commission/KYC/platform-wallet). 0.5% commission split verified on both /investments/buy (99.5% to company owner, 0.5% to platform_wallet, correct wallet_transactions entries: share_purchase, share_sale_received, commission_purchase) and /marketplace/{id}/accept (buyer -total, seller 99.5%, platform 0.5%, commission_marketplace tx). /api/admin/platform-wallet returns {balance, transactions[]} and is Admin-only (403 for Investor/Company). /api/admin/dashboard now exposes platform_earnings and pending_kyc. Full KYC pipeline works: /kyc/upload (Investor+Company) sets kyc_status='submitted' and stores in kyc_docs, /kyc/mine returns status+docs, /admin/kyc/pending lists submitters with latest_doc, /admin/kyc/{uid}/verify sets 'verified', /admin/kyc/{uid}/reject sets 'rejected', Admin upload blocked with 400. RBAC on new endpoints holds (Investor/Company forbidden on /admin/kyc/* and /admin/platform-wallet). Notifications endpoint unchanged and returns list. FRONTEND (390x844 mobile viewport): Investor home shows notifications bell + KYC shield in header (home-notifications-btn/home-kyc-btn) — verified. KYC banner hidden because seeded investor is already 'verified' (correct behavior). Bell navigates to /notifications with correct list. /kyc screen shows current status card (verified investor hides upload card — expected per code). Admin dashboard hero shows 'PLATFORM EARNINGS · 0.5% COMMISSION' and value; PENDING KYC + AUM KPIs render. Company dashboard header has notifications + KYC buttons. Company add-property has add-pick-images and per-image remove buttons visible. CRITICAL FRONTEND BUG FOUND: Admin approvals screen is missing the 4th 'KYC' tab — only properties/companies/withdrawals render. See action_items.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "(admin)/approvals.tsx tab bar",
+        "issue": "KYC tab is not rendered. `type Tab` (line 9) and the tab array at line 57 both exclude 'kyc'. Only ['properties','companies','withdrawals'] map to TouchableOpacity, so testID='approvals-tab-kyc' never mounts. load() and act() already contain kyc branches but are unreachable.",
+        "testID": "approvals-tab-kyc",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "(investor)/properties (Explore)", "issues": ["Leftover TEST_prop_* cards from prior test runs still appear alongside seeded Skyline Estates properties. Not a new bug; carried over from iteration 1."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_backend.py",
+    "/app/backend/tests/test_enhancements.py",
+    "/app/test_reports/pytest/enhancements.xml",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix /app/frontend/app/(admin)/approvals.tsx: add 'kyc' to `type Tab` (line 9) and to the tab array at line 57 so the 4th tab renders with testID='approvals-tab-kyc'. Also render KYC list items with user name/email + approve/reject buttons that call PATCH /admin/kyc/{id}/verify|reject (the load()/act() logic is already partially implemented on lines 28-30 and 44-46 but assumes item.id is user_id — confirm pending KYC items surface with .id set to user id, which they do since /admin/kyc/pending returns user docs including 'id').",
+    "Consider showing kyc-pick-image + kyc-submit-btn even for verified users (with a subtle 'Re-upload document' affordance) if product wants easy resubmission — currently upload card is hidden when status=='verified' which matches code intent but blocks the picker from appearing on the seeded investor. Testing agent tested picker via other freshly registered users through API and it works.",
+    "Optional (carry-over): purge TEST_prop_* pollution from properties DB or scope test data to a separate collection."
+  ],
+  "critical_code_review_comments": [
+    "approvals.tsx: `type Tab` union does not include 'kyc' but downstream code compares tab === 'kyc'. TypeScript will treat this as an impossible comparison; the branches on lines 28-30 and 44-46 are dead code until the tab is added.",
+    "server.py buy_shares/marketplace-accept still not wrapped in a Mongo transaction — partial failure could desync wallets. Not blocking but noted from iteration 1.",
+    "server.py grew past 1240 lines with new KYC & platform-wallet routes — split into routers (auth, kyc, admin, wallet, marketplace, properties) for maintainability.",
+    "KYC docs collection does not have an index on user_id or created_at — /admin/kyc/pending's per-user latest_doc lookup will scale poorly; add compound index (user_id, created_at desc).",
+    "kyc/upload accepts arbitrary-sized base64 strings without size validation — add a max-length guard (e.g., < 5 MB decoded) to prevent DoS via huge payloads."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_enhancements.py (new)"
+  ],
+  "success_rate": {"backend": "100% (54/54)", "frontend": "~93% (13/14 flows) — 1 UI bug: approvals KYC tab missing"},
+  "seed_data_creation": "Backend enhancement tests create TEST_kyc_* investors and submit dummy 1x1 PNG base64 documents; several are left in kyc_docs collection.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Reuse /app/backend/tests/test_enhancements.py — all 15 pass in ~3s. Use EXPO_PUBLIC_BACKEND_URL from /app/frontend/.env. Seeded investor is now kyc_status='verified' from earlier test runs, so /kyc will hide the upload card and the home KYC banner will NOT appear on that user — to visually test the picker+banner UI, register a fresh investor via /(auth)/signup or call POST /auth/register then log in. Investor wallet balance is well above 500k after cumulative deposits, so use /wallet/mock-deposit only if strictly required. Admin approvals KYC tab bug is confirmed missing — retest after main agent fixes /app/frontend/app/(admin)/approvals.tsx.",
+  "rca_of_issue": "Admin approvals KYC tab: developer added the load/act branches for 'kyc' (lines 28-30, 44-46) and even added `testID={`approvals-tab-${t}`}` template on line 58, but forgot to (a) include 'kyc' in `type Tab` union (line 9) and (b) include 'kyc' in the array `(['properties','companies','withdrawals'] as Tab[])` (line 57). Fix is a 2-character edit in each place. Reproduction: log in as admin@propshare.com → navigate to /(admin)/approvals → observe only 3 tab pills; probe DOM for `[data-testid=\"approvals-tab-kyc\"]` returns nothing."
+}

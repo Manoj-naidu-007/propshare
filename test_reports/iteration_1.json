@@ -1,0 +1,47 @@
+{
+  "summary": "First test iteration for PropShare (Expo RN + FastAPI + Mongo). Backend: 39/39 pytest tests PASSED across auth, properties, wallet, investments, portfolio, marketplace, Razorpay order+signature, admin dashboard/users/approvals/interest, company dashboard, RBAC and suspended-user checks. Frontend: welcome + investor login + home + portfolio + explore + property detail + buy modal + confirm purchase + toast + marketplace + wallet + admin approvals/users/interest + company add-property pages all render and behave correctly on a 390x844 mobile viewport. Role-based routing verified (login.tsx uses router.replace per role, index.tsx also redirects per role). No deprecated Expo packages (no expo-av / expo-barcode-scanner / expo-background-fetch). No React Native red screens. Only a benign console warning: `props.pointerEvents is deprecated. Use style.pointerEvents` (upstream library).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/", "issue": "Returns 404 (no health endpoint). Consider adding a lightweight /api/health for uptime probes."},
+      {"endpoint": "GET /api/properties (admin)", "issue": "Test data (TEST_prop_*) created by property-create tests remains in DB; add cleanup or an admin bulk-delete for test properties to avoid polluting seeded list."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "(investor)/properties (Explore)", "issues": ["Leftover TEST_prop_* cards from backend test runs surface on top of seeded 3 properties — not a UI bug but degrades demo experience."]}
+    ],
+    "react_native_issues": [
+      {"component": "pointerEvents prop", "issue": "Console warning: 'props.pointerEvents is deprecated. Use style.pointerEvents'. Search app code / dependencies and migrate any `pointerEvents=\"none\"` prop to `style={{ pointerEvents: 'none' }}` on RN Web 0.20+."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/conftest.py",
+    "/app/backend/tests/test_backend.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Optional: add GET /api/health endpoint (returns {status:'ok'}) — currently /api/ returns 404.",
+    "Optional: add a cleanup task or admin endpoint to purge TEST_* properties/users created during pytest runs.",
+    "Migrate any `pointerEvents` prop usage to style-based to silence RN Web deprecation warning."
+  ],
+  "critical_code_review_comments": [
+    "server.py is 1132 lines — consider splitting into routers (auth, properties, wallet, marketplace, admin, company) for maintainability, though not blocking.",
+    "buy_shares does not run inside a Mongo transaction; a partial failure could desync wallet vs holdings vs shares_sold. Consider sessions/transactions or compensating logic. Same applies to marketplace/accept.",
+    "marketplace accept computes invested decrement using `seller_holding['invested'] / max(seller_holding['shares'], 1)` — division by potentially fractional value works but leaves seller.invested as a residual float; consider zeroing when shares==0.",
+    "hosted checkout HTML embeds unsanitised `order_id` (UUID from Razorpay, low risk but XSS surface if ever user-controlled).",
+    "Suspend flow: server correctly blocks login of suspended users; token issued before suspension is still valid until expiry (no revocation list). Acceptable for MVP but worth noting."
+  ],
+  "updated_files": [
+    "/app/backend/tests/conftest.py (new)",
+    "/app/backend/tests/test_backend.py (new)"
+  ],
+  "success_rate": {"backend": "100% (39/39)", "frontend": "100% of tested flows"},
+  "seed_data_creation": "No new persistent seed data. Backend tests create TEST_* investors and 1-2 TEST_prop_* properties per run (they use TEST_ prefix; not cleaned up).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend URL from /app/frontend/.env EXPO_PUBLIC_BACKEND_URL. Reuse /app/backend/tests/test_backend.py as regression suite. Investor seed wallet is not exactly 500000 anymore because previous test runs debited/credited it. To test admin/company login redirect via the same Playwright session, clear localStorage/AsyncStorage or open a fresh browser context between logins — otherwise the index.tsx redirect uses the cached user and /(auth)/welcome is bypassed. Admin routes verified via direct navigation to /(admin)/approvals, /(admin)/interest, /(admin)/users which all rendered admin tab bar correctly.",
+  "rca_of_issue": "N/A — no failing tests remain after fixing the insufficient-balance test to use a freshly registered zero-balance investor (session-scoped new_investor fixture was being credited by earlier tests)."
+}

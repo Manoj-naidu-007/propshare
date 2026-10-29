@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { api, setToken as saveToken, TOKEN_KEY } from "./api";
 import { storage } from "@/src/utils/storage";
+import { useRouter } from "expo-router";
 
 export type Role = "Admin" | "Company" | "Investor";
 export type User = {
@@ -27,6 +28,7 @@ const AuthCtx = createContext<Ctx | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const bootstrap = useCallback(async () => {
     try {
@@ -62,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     await saveToken(null);
     setUser(null);
+    router.replace("/(auth)/signup");
   };
 
   const refresh = async () => {

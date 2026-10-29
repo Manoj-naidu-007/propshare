@@ -1,10 +1,13 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
+import { useAuth } from "@/src/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/src/theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CompanyLayout() {
   const insets = useSafeAreaInsets();
+  const { user, loading } = useAuth();
+  if (!loading && !user) return <Redirect href="/(auth)/signup" />;
   return (
     <Tabs
       screenOptions={{

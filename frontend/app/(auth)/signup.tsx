@@ -55,7 +55,7 @@ export default function SignUp() {
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <TouchableOpacity onPress={() => router.back()} style={styles.back} testID="signup-back-btn">
+          <TouchableOpacity onPress={() => router.replace("/(auth)/welcome")} style={styles.back} testID="signup-back-btn">
             <Ionicons name="chevron-back" color={colors.onSurface} size={26} />
           </TouchableOpacity>
 

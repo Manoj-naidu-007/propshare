@@ -115,7 +115,8 @@ python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+uvicorn server:app --host 0.0.0.0 --port 8000 --reload 
+python -m uvicorn server:app --host 0.0.0.0 --port 8000 --reload
 ```
 On first startup the app automatically:
 - creates all MySQL tables (`CREATE TABLE IF NOT EXISTS` equivalent via SQLAlchemy metadata)

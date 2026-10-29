@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.realtyshares.e1eiiw",
+      "bundleIdentifier": "com.Manoj.propshare",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Attach photos of your property and KYC documents",
         "NSCameraUsageDescription": "Capture photos of your property and KYC documents"
@@ -22,7 +22,7 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.emergent.realtyshares.e1eiiw",
+      "package": "com.Manoj.propshare",
       "permissions": ["android.permission.READ_MEDIA_IMAGES", "android.permission.CAMERA"]
     },
     "web": {
